@@ -1,0 +1,59 @@
+1. pip install -r requirements.txt
+2. Fill your API key in logfeeder.ini at cspi section.
+3. (optional) If you only want to query specific type of logs, you can fill log type in logfeeder.ini log_types at logfeeder section
+   LogTypes=wtp, spyware, application_control, behavior_monitoring, url_filtering, virus, dlp, device_control, machine_learning, network_virus
+4. python end_customer_query_logs.py
+
+######## Others ##########
+API using in this tool:
+1. GET /SMPI/service/wfbss/customer/api/1.0/logfeeder/query_syslog
+EX: /SMPI/service/wfbss/customer/api/1.0/logfeeder/query_syslog?range_from=1606271000&range_to=1606271998
+Query Params:
+  range_from(integer, required): this arg should be UNIX timestamp ex: 1606271000
+  range_to(integer, required): this arg should be UNIX timestamp ex: 1606271998
+  page(integer, optional): use for pagination ex: 1 (default=1)
+  limit(integer, optional): limit items per page ex: 30 (default=25)
+Response from API(JSON):
+```
+{
+    'params': {
+        'did': 387242,
+        'label_mode_enabled': 0,
+        'user_mode_enabled': 1,
+        'params': {
+            'order_by': [{'name': 'recvtime'}],
+            # you should use this to do pagination
+            'record_range': {'records_per_page': 25, 'total_records': 205, 'page_id': 1, 'total_pages': 9},
+            'log_type': 203,
+            'time_range': {'range_to': 1606202526, 'range_from': 1606166527}
+        }
+    },
+    # This is syslogs you query from this API
+    'result': [...]
+}
+```
+
+2. POST /SMPI/service/wfbss/customer/api/1.0/log_existence
+Request Body(JSON): (all fields is required)
+```
+{
+  "range_from": 0,
+  "range_to": 1563953300
+}
+```
+Response (JSON):
+```
+{
+  "result": [
+    {
+      "log_types": [
+        "wtp", "virus"
+      ]
+    }
+  ]
+}
+```
+
+If you got Response status: 401, please check your API key.
+If you got Response status: 500 many times, please contact support.
+If you got Response status: 504, please try again it happened because of network.
